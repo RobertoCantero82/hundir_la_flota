@@ -2,10 +2,10 @@
   <img src="img/banner.png" width="100%" alt="Hundir la Flota - Edición Vitoria-Gasteiz">
 </p>
 
-<h1 align="center">⚓ Simulador de estrategia naval desarrollado en Python para el Bootcamp de Data Science de The Bridge  ⚓</h1>
+<h1 align="center">🏴‍☠️ Simulador de estrategia naval desarrollado en Python para el Bootcamp de Data Science de The Bridge  🏴‍☠️</h1>
 
 
-## 📖 Misión y Objetivos
+## 🚩 Misión y Objetivos 🚩
 
 Este proyecto no es solo una recreación del clásico juego de mesa. Este es el primer desafío de programación del bootcamp de Data Science para demostrar los conocimientos adquiridos en Python y Programación Orientada a Objetos. Gracias al proyecto he aprendido a:
 
@@ -13,9 +13,9 @@ Este proyecto no es solo una recreación del clásico juego de mesa. Este es el 
 2.  **Aplicar los conceptos aprendidos desde el inicio del bootcamp:** poniendo en práctica condicionales, bucles o la propia Programación Orientada a Objetos.
 3.  **Conseguir crear un entorno de juego funcional y divertido:** no solo que el juego funcione, sino que siga las principales reglas del juego de mesa original, con divertidas características adicionales.
 
-## 🚀 Flujo de trabajo
+## ⚙️ Flujo de trabajo ⚙️
 
-#### ⚓ Archivo principal (_main.py_)
+#### ⚓ Archivo principal (_hundirlaflota.py_)
 
 1. Importación de librerías: las creadas para las funciones y clases, además de NumPy y Random.
 
@@ -33,7 +33,7 @@ Este proyecto no es solo una recreación del clásico juego de mesa. Este es el 
 
 2. Funciones: un barco puede recibir un impacto (lo que le quita una vida) o puede hundirse (cuando no tiene vidas).
 
-#### ⚙️ Archivo de funciones (_utils.py_)
+#### 🔗 Archivo de funciones (_utils.py_)
 
 1. Importo las librerías: la creada como clases, Random y NumPy.
 
@@ -47,7 +47,7 @@ Este proyecto no es solo una recreación del clásico juego de mesa. Este es el 
    
 6. Función para disparar.
 
-## 📦 Distribución del repositorio
+## 📂 Distribución del repositorio
 
 - En la ruta principal se encuentra hundirlaflota.py, que es el archivo principal que se ejecuta. Después están clases.py y utils.pys, que son los archivos que recogen las clases y las funciones, respectivamente.
 - En la carpeta img, se incluyen las imágenes necesarias para adornar el repositorio.
