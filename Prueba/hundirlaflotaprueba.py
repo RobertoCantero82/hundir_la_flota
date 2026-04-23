@@ -12,7 +12,7 @@ mi_tablero = utilsprueba.crear_tablero()
 tablero_rival = utilsprueba.crear_tablero()
 tablero_rival_oculto = utilsprueba.crear_tablero()
 
-print(" ⚓ ¡Bienvenido a Hundir la Flota![VERSIÓN PIRATA MINI (Patrocinado por The Secret Of Monkey Island)] ⚓ ")
+print(" 🏴‍☠️ ¡Bienvenido a Hundir la Flota! -- VERSIÓN PIRATA MINI (Patrocinado por The Secret Of Monkey Island) 🏴‍☠️ ")
 print()
 time.sleep(2)
 
@@ -88,7 +88,7 @@ while not jugador_gana and not rival_gana:
             if jugador_gana:
                 time.sleep(0.5)
                 break
-            print(" ✨ Me has dado! ¡Luchas como un auténtico pirata! ✨ ")
+            print(" ✨ ¡Me has dado! ¡Luchas como un auténtico pirata! ✨ ")
             print()
             time.sleep(1.5)
             continue
@@ -126,7 +126,7 @@ while not jugador_gana and not rival_gana:
 
             f_aleatoria = np.random.randint(0, 3)
             c_aleatoria = np.random.randint(0, 3)
-            print(f" 🚨 ¡Otro de mis cañonazo vuela hacia ({f_aleatoria}, {c_aleatoria})! 🚨 ")
+            print(f" 🚨 ¡Otro de mis cañonazos vuela hacia ({f_aleatoria}, {c_aleatoria})! 🚨 ")
             time.sleep(1.2)
 
             disparo_rival = utilsprueba.disparar((f_aleatoria, c_aleatoria), mi_tablero, flota)
@@ -147,7 +147,7 @@ if not rendido:
     print()
     print("≈" * 25)
     print()
-    time.sleep(0.5)
+    time.sleep(1)
     utilsprueba.mostrar_tableros(mi_tablero, tablero_rival)
     time.sleep(1)
     print()

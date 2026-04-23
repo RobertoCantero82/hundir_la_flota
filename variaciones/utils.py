@@ -13,7 +13,7 @@ def crear_tablero(tamaño:tuple = (10,10)):
 # FUNCIÓN PARA MOSTRAR LOS TABLEROS EN TERMINAL
 
 def mostrar_tableros(mi_tablero, tablero_rival):  # ← eliminada la línea duplicada de dentro
-   header = "   " + " ".join(str(i) for i in range(10)) # Crea "   0 1 2 3 4 5 6 7 8 9"
+   header = "     " + " ".join(str(i) for i in range(10)) # Crea "   0 1 2 3 4 5 6 7 8 9"
    
    print("\n" + " " * 10 + "MI TABLERO")
    print(header)
@@ -98,7 +98,7 @@ def disparar(casilla, tablero, flota):
             barco.recibir_impacto() # se inicia la función de la clase barco de recibir impacto (quita una vida como atributo)
 
             if barco.hundido(): # si las vidas llegan a cero
-               print(f"¡El {barco.nombre} está hundido!") # se imprime hundido
+               print(f" 🏴‍☠️ ¡La {barco.nombre} está hundida! 🏴‍☠️ ") # se imprime hundido
             else:
                print("¡Tocado!") # si quedan vidas, se imprime tocado
 
@@ -106,10 +106,10 @@ def disparar(casilla, tablero, flota):
    
    elif tablero[f,c] == " ": # en caso de que se dispare a una casilla en blanco
       tablero[f,c] = "A" # se cambia su valor por una A
-      print("¡Agua!") # se imprime el mensaje
+      print(" 🌀 ¡Agua! 🌀 ") # se imprime el mensaje
       return "agua" # se devuelve agua
    
    else:
-      print("Ya habías disparado aquí") # si el disparo se hace a una casilla diferente de "0" o  de " ", es que
+      print(" 🙄 ¡Inútil! Ya has malgastado pólvora en esa zona. ¿Acaso intentas pescar? 🙄 ") # si el disparo se hace a una casilla diferente de "0" o  de " ", es que
                                         # ya se había disparado. Con lo que hay que repetir y se imprime el mensaje
       return "repetido" # devuelve el repetido
