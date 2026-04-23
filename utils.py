@@ -1,8 +1,12 @@
-# IMPORTO LAS LIBRERÍAS NECESARIAS
+# IMPORTO LAS LIBRERÍAS y CÓDIGOS NECESARIOS
 
 import random # librería para los barcos aleatorios y los disparos aleatorios
 import clases # librería con las clases de barcos
 import numpy as np # librería para gestionar matrices y arrays
+
+ROJO    = "\033[91m"
+AZUL    = "\033[94m"
+RESET   = "\033[0m"
 
 # FUNCIÓN PARA CREAR TABLEROS DE 10X10 CON " " EN CADA CASILLA
 
@@ -10,20 +14,36 @@ def crear_tablero(tamaño:tuple = (10,10)):
    tablero = np.full(tamaño, " ") 
    return tablero 
 
+# FUNCIÓN PARA COLOREAR CELDAS
+
+def colorear_celda(celda):
+    if celda == "X":
+        return f"{ROJO}X{RESET}"
+    elif celda == "A":
+        return f"{AZUL}A{RESET}"
+    return celda
+
 # FUNCIÓN PARA MOSTRAR LOS TABLEROS EN TERMINAL
 
-def mostrar_tableros(mi_tablero, tablero_rival):  
-   header = "     " + " ".join(str(i) for i in range(10)) 
+def mostrar_tableros(mi_tablero, tablero_rival):
+   header = "     " + " ".join(str(i) for i in range(10))
    
-   print("\n" + " " * 10 + "MI TABLERO")
+   print("\n" "            TABLERO")
+   print("       DEL SUCIO JUGADOR")
+   print()
    print(header)
    for i, fila in enumerate(mi_tablero):
-      print(f"{i:2} | {' '.join(fila)} |") 
+      fila_coloreada = " ".join(colorear_celda(c) for c in fila)
+      print(f"{i:2} | {fila_coloreada} |")
+   print()
    
-   print("\n" + " " * 8 + "TABLERO RIVAL")
+   print("            TABLERO")
+   print("       DEL APUESTO PIRATA")
+   print()
    print(header)
    for i, fila in enumerate(tablero_rival):
-      print(f"{i:2} | {' '.join(fila)} |")
+      fila_coloreada = " ".join(colorear_celda(c) for c in fila)
+      print(f"{i:2} | {fila_coloreada} |")
    print()
 
 # FUNCIÓN PARA COLOCAR LOS BARCOS EN MI TABLERO (aleatoriamente)
@@ -100,7 +120,7 @@ def disparar(casilla, tablero, flota):
             if barco.hundido(): 
                print(f" 🏴‍☠️ ¡La {barco.nombre} está hundida! 🏴‍☠️ ") 
             else:
-               print("¡Tocado!") 
+               print(" 🧨 ¡Tocado! 🧨 ") 
 
       return "tocado" 
    
@@ -110,5 +130,6 @@ def disparar(casilla, tablero, flota):
       return "agua" 
    
    else:
-      print(" 🙄 ¡Inútil! Ya has malgastado pólvora en esa zona. ¿Acaso intentas pescar? 🙄 ") 
+      print(" 🙄 ¡Inútil! Ya has malgastado pólvora en esa zona. ¿Acaso intentas pescar? 🙄 ")
+      print() 
       return "repetido" 

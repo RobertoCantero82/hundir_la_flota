@@ -8,27 +8,28 @@ import numpy as np
 
 # CREAR LOS TABLEROS
 
-mi_tablero = utils.crear_tablero()           # Tablero 10x10 del jugador
-tablero_rival = utils.crear_tablero()        # Tablero 10x10 del rival (visible, sin barcos)
-tablero_rival_oculto = utils.crear_tablero() # Tablero 10x10 del rival (con barcos ocultos)
+mi_tablero = utils.crear_tablero()           
+tablero_rival = utils.crear_tablero()        
+tablero_rival_oculto = utils.crear_tablero() 
 
-print(" 🏴‍☠️ ¡Bienvenido a Hundir la Flota! -- VERSIÓN PIRATA (Patrocinado por The Secret Of Monkey Island) 🏴‍☠️ ")
+print("  🏴‍☠️  ¡Bienvenido a Hundir la Flota! -- VERSIÓN PIRATA (Patrocinado por The Secret Of Monkey Island)  🏴‍☠️  ")
 print()
+time.sleep(2)
 
 # COLOCAMOS LOS BARCOS
 
-print(" ⛵ Desplegando tu flota...grumete ⛵ ")
+print(" ⛵ Desplegando tu flota...aspirante... ⛵ ")
 time.sleep(2)
 flota = utils.colocar_barcos(mi_tablero)
 print()
-print(" 🍺 ¡Flota desplegada! (Y sin una gota de grog encima) 🍺 ")
+print(" 🍺 ¡Mi flota ya está desplegada! (Y sin derramar ni una gota de grog...) 🍺 ")
 time.sleep(2)
 print()
-print(" 🌫️ Escondiendo los barcos... 🌫️ ")
+print("  🌫️  Escondiendo mis barcos entre la niebla...  🌫️  ")
 time.sleep(2)
 flota_rival = utils.colocar_barcos_rival(tablero_rival_oculto)
 print()
-print(" ⚔️ ¡Listos para la batalla! (y para los insultos) ⚔️ ")
+print("  ⚔️  ¡Listos para la batalla! (y para los insultos)  ⚔️  ")
 time.sleep(2)
 
 # BUCLE DE JUEGO
@@ -40,13 +41,17 @@ disparo = None
 
 while not jugador_gana and not rival_gana:
 
-    print("─" * 60)  # ← separador más corto para tablero 3x3
+    print()
+    print("≈" * 50)
+    print()
+    time.sleep(1)  
     utils.mostrar_tableros(mi_tablero, tablero_rival)
 
     # ── Turno del jugador ──────────────────────────────────────────────────────
 
     try:
-        accion = input(" 💣 ¡Fuego de cañón! (Fila Columna) o 'Q' para huir como un pollo 🐔 : ").lower()
+        accion = input(" 💣 ¡Dispara el cañón! (Fila Columna) o 'Q' para huir como un pollo 🐔 : ").lower()
+        print()
 
         if accion == 'q':
             mensajes_rendicion = [
@@ -68,24 +73,24 @@ while not jugador_gana and not rival_gana:
 
         f, c = map(int, coords)
 
-        if not (0 <= f <= 10 and 0 <= c <= 10):
+        if not (0 <= f <= 9 and 0 <= c <= 9):
             print(" 📜 ¡Te sales del mapa! Tu mundo solo está entre el 0 y el 9. 📜 ")
             print()
             continue
 
         disparo = utils.disparar((f, c), tablero_rival_oculto, flota_rival)
-        time.sleep(0.8)
+        time.sleep(1)
         print()
 
         if disparo == "tocado":
             tablero_rival[f, c] = "X"
             jugador_gana = not np.any(tablero_rival_oculto == "O")
             if jugador_gana:
-                time.sleep(0.5)
+                time.sleep(1)
                 break
             print(" ✨ ¡Me has dado! ¡Luchas como un auténtico pirata! ✨ ")
             print()
-            time.sleep(1.5)
+            time.sleep(1)
             continue
         elif disparo == "agua":
             tablero_rival[f, c] = "A"
@@ -100,38 +105,50 @@ while not jugador_gana and not rival_gana:
 
     if disparo != "repetido":
         print(" 🧭 Estoy consultando la brújula... ¡Prepárate! 🧭 ")
-        time.sleep(1.5)
+        print()
+        time.sleep(1)
 
         f_aleatoria = np.random.randint(0, 10)  # ← cambiado de 10 a 3
         c_aleatoria = np.random.randint(0, 10)
 
-        print(f"💥 El rival lanza un misil a ({f_aleatoria}, {c_aleatoria})")
+        print(f" ☄️ ¡Un proyectil silba hacia ({f_aleatoria}, {c_aleatoria})")
+        print()
         time.sleep(1)
 
         disparo_rival = utils.disparar((f_aleatoria, c_aleatoria), mi_tablero, flota)
+        time.sleep(1)
+        print()  
 
-        # Si el rival acierta, sigue disparando
+        rival_gana = not np.any(mi_tablero == "O")  # compruebo victoria rival tras primer disparo
+        
         while disparo_rival == "tocado" and not rival_gana:
             print(" 🆘 ¡Te he dado! ¡Tu apellido ahora es Problemas! 🆘 ")
-            time.sleep(2)
+            print()
+            time.sleep(1)
 
-            f_aleatoria = np.random.randint(0, 10)  # ← cambiado de 10 a 3
+            f_aleatoria = np.random.randint(0, 10)  
             c_aleatoria = np.random.randint(0, 10)
             print(f" 🚨 ¡Otro de mis cañonazos vuela hacia ({f_aleatoria}, {c_aleatoria})! 🚨 ")
             time.sleep(1)
+            print()
 
             disparo_rival = utils.disparar((f_aleatoria, c_aleatoria), mi_tablero, flota)
+            time.sleep(1)
+            print()
 
+            rival_gana = not np.any(mi_tablero == "O")  # compruebo victoria rival tras cada disparo extra
+   
     # ── Compruebo si hay victoria ──────────────────────────────────────────────
 
     jugador_gana = not np.any(tablero_rival_oculto == "O")
     rival_gana = not np.any(mi_tablero == "O")
+    time.sleep(1)
 
 # RESULTADO
 
 if not rendido:
     print()
-    print("≈" * 60)
+    print("≈" * 50)
     print()
     time.sleep(1)
     utils.mostrar_tableros(mi_tablero, tablero_rival)

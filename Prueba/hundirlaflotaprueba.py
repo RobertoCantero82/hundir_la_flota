@@ -12,24 +12,24 @@ mi_tablero = utilsprueba.crear_tablero()
 tablero_rival = utilsprueba.crear_tablero()
 tablero_rival_oculto = utilsprueba.crear_tablero()
 
-print(" 🏴‍☠️ ¡Bienvenido a Hundir la Flota! -- VERSIÓN PIRATA MINI (Patrocinado por The Secret Of Monkey Island) 🏴‍☠️ ")
+print("  🏴‍☠️  ¡Bienvenido a Hundir la Flota! -- VERSIÓN PIRATA MINI (Patrocinado por The Secret Of Monkey Island)  🏴‍☠️  ")
 print()
 time.sleep(2)
 
 # COLOCAMOS LOS BARCOS
 
-print(" ⛵ Desplegando tu flota...grumete ⛵ ")
+print(" ⛵ Desplegando tu flota...aspirante... ⛵ ")
 time.sleep(2)
 flota = utilsprueba.colocar_barcos(mi_tablero)
 print()
-print(" 🍺 ¡Flota desplegada! (Y sin una gota de grog encima) 🍺 ")
+print(" 🍺 ¡Mi flota ya está desplegada! (Y sin derramar ni una gota de grog...) 🍺 ")
 time.sleep(2)
 print()
-print(" 🌫️ Escondiendo los barcos... 🌫️ ")
+print("  🌫️  Escondiendo mis barcos entre la niebla...  🌫️  ")
 time.sleep(2)
 flota_rival = utilsprueba.colocar_barcos_rival(tablero_rival_oculto)
 print()
-print(" ⚔️ ¡Listos para la batalla! (y para los insultos) ⚔️ ")
+print("  ⚔️  ¡Listo para la batalla! (y para los insultos)  ⚔️  ")
 time.sleep(2)
 
 # BUCLE DE JUEGO
@@ -42,7 +42,7 @@ disparo = None
 while not jugador_gana and not rival_gana:
 
     print()
-    print("≈" * 40)
+    print("≈" * 50)
     print()
     time.sleep(1)
     utilsprueba.mostrar_tableros(mi_tablero, tablero_rival)
@@ -79,18 +79,18 @@ while not jugador_gana and not rival_gana:
             continue
 
         disparo = utilsprueba.disparar((f, c), tablero_rival_oculto, flota_rival)
-        time.sleep(0.8)
+        time.sleep(1)
         print()
 
         if disparo == "tocado":
             tablero_rival[f, c] = "X"
             jugador_gana = not np.any(tablero_rival_oculto == "O")
             if jugador_gana:
-                time.sleep(0.5)
+                time.sleep(1)
                 break
             print(" ✨ ¡Me has dado! ¡Luchas como un auténtico pirata! ✨ ")
             print()
-            time.sleep(1.5)
+            time.sleep(1)
             continue
         elif disparo == "agua":
             tablero_rival[f, c] = "A"
@@ -105,7 +105,7 @@ while not jugador_gana and not rival_gana:
 
     if disparo != "repetido":
         print(" 🧭 Estoy consultando la brújula... ¡Prepárate! 🧭 ")
-        time.sleep(2)
+        time.sleep(1)
         print()
 
         f_aleatoria = np.random.randint(0, 3)
@@ -123,13 +123,13 @@ while not jugador_gana and not rival_gana:
 
         while disparo_rival == "tocado" and not rival_gana:
             print(" 🆘 ¡Te he dado! ¡Tu apellido ahora es Problemas! 🆘 ")
-            time.sleep(2)
+            time.sleep(1)
             print()
 
             f_aleatoria = np.random.randint(0, 3)
             c_aleatoria = np.random.randint(0, 3)
             print(f" 🚨 ¡Otro de mis cañonazos vuela hacia ({f_aleatoria}, {c_aleatoria})! 🚨 ")
-            time.sleep(1.2)
+            time.sleep(1)
             print()
 
             disparo_rival = utilsprueba.disparar((f_aleatoria, c_aleatoria), mi_tablero, flota)
@@ -142,13 +142,13 @@ while not jugador_gana and not rival_gana:
 
     jugador_gana = not np.any(tablero_rival_oculto == "O")
     rival_gana = not np.any(mi_tablero == "O")
-    time.sleep(0.5)
+    time.sleep(1)
 
 # RESULTADO
 
 if not rendido:
     print()
-    print("≈" * 25)
+    print("≈" * 50)
     print()
     time.sleep(1)
     utilsprueba.mostrar_tableros(mi_tablero, tablero_rival)
