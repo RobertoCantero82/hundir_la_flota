@@ -74,7 +74,7 @@ while not jugador_gana and not rival_gana:
         f, c = map(int, coords)
 
         if not (0 <= f <= 2 and 0 <= c <= 2):
-            print(" 📜 ¡Te sales del mapa! Tu mundo solo está entre el 0 y el 9. 📜 ")
+            print(" 📜 ¡Te sales del mapa! Tu mundo solo está entre el 0 y el 2. 📜 ")
             print()
             continue
 
