@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🏴‍☠️ Hundir la Flota — Edición Pirata</title>
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean: #0a1628;
+    --ocean-mid: #0d2040;
+    --ocean-light: #163357;
+    --wood: #8B5E3C;
+    --wood-dark: #5c3a1e;
+    --gold: #d4a017;
+    --gold-light: #f0c040;
+    --rum: #c0392b;
+    --rum-light: #e74c3c;
+    --foam: #e8f4f8;
+    --hit: #e74c3c;
+    --miss: #2980b9;
+    --sunk: #8e44ad;
+    --ship: #f39c12;
+    --text-light: #f0e6cc;
+    --text-dim: #a89070;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--ocean);
+    color: var(--text-light);
+    font-family: 'Crimson Pro', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 80%, rgba(13,32,64,0.8) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(22,51,87,0.6) 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23163357' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Waves animation */
+  .waves {
+    position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
+    z-index: 0; pointer-events: none; opacity: 0.3;
+  }
+  .wave { animation: wave 4s ease-in-out infinite; }
+  .wave2 { animation: wave 5s ease-in-out infinite reverse; }
+  @keyframes wave {
+    0%, 100% { d: path("M0,40 C150,20 300,60 450,40 C600,20 750,60 900,40 L900,60 L0,60 Z"); }
+    50% { d: path("M0,40 C150,60 300,20 450,40 C600,60 750,20 900,40 L900,60 L0,60 Z"); }
+  }
+
+  #app {
+    position: relative; z-index: 1;
+    max-width: 520px; margin: 0 auto;
+    padding: 12px 12px 80px;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 16px 0 12px;
+    border-bottom: 2px solid var(--gold);
+    margin-bottom: 16px;
+    position: relative;
+  }
+  header::before, header::after {
+    content: '⚓';
+    position: absolute; top: 50%; transform: translateY(-50%);
+    font-size: 20px; opacity: 0.5;
+  }
+  header::before { left: 0; }
+  header::after { right: 0; }
+  h1 {
+    font-family: 'Pirata One', cursive;
+    font-size: clamp(22px, 6vw, 32px);
+    color: var(--gold-light);
+    text-shadow: 0 0 20px rgba(212,160,23,0.5), 2px 2px 4px rgba(0,0,0,0.8);
+    line-height: 1.1;
+  }
+  .subtitle {
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  /* STATUS BAR */
+  .status-bar {
+    background: var(--ocean-mid);
+    border: 1px solid var(--ocean-light);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .status-bar .icon { font-size: 18px; flex-shrink: 0; }
+  .status-bar .msg { flex: 1; }
+  .status-bar.alert { border-color: var(--rum); background: rgba(192,57,43,0.15); }
+  .status-bar.success { border-color: var(--gold); background: rgba(212,160,23,0.1); }
+
+  /* SCORE */
+  .score-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; margin-bottom: 14px;
+  }
+  .score-card {
+    background: var(--ocean-mid);
+    border: 1px solid var(--ocean-light);
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: center;
+  }
+  .score-card .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+  .score-card .value { font-family: 'Pirata One', cursive; font-size: 24px; color: var(--gold-light); line-height: 1.1; }
+  .score-card.rival .value { color: var(--rum-light); }
+
+  /* BOARDS */
+  .boards-section { margin-bottom: 14px; }
+  .board-label {
+    font-family: 'Pirata One', cursive;
+    font-size: 15px;
+    color: var(--gold);
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .board-label .badge {
+    font-family: 'Crimson Pro', serif;
+    font-size: 11px; font-style: italic;
+    background: var(--ocean-light);
+    padding: 2px 8px; border-radius: 10px;
+    color: var(--text-dim);
+  }
+
+  .board-wrapper {
+    background: var(--ocean-mid);
+    border: 1px solid var(--ocean-light);
+    border-radius: 10px;
+    padding: 8px;
+    margin-bottom: 12px;
+  }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: 22px repeat(10, 1fr);
+    gap: 2px;
+  }
+  .col-header, .row-header {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--text-dim);
+    font-family: 'Pirata One', cursive;
+    height: 30px;
+  }
+  .row-header { grid-column: 1; }
+
+  .cell {
+    width: 100%; aspect-ratio: 1;
+    border-radius: 3px;
+    background: rgba(22,51,87,0.5);
+    border: 1px solid rgba(22,51,87,0.8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    cursor: default;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .cell.enemy {
+    cursor: pointer;
+  }
+  .cell.enemy:hover:not(.hit):not(.miss):not(.sunk-cell) {
+    background: rgba(212,160,23,0.2);
+    border-color: var(--gold);
+    transform: scale(1.05);
+  }
+  .cell.ship-cell {
+    background: rgba(243,156,18,0.25);
+    border-color: rgba(243,156,18,0.5);
+  }
+  .cell.hit {
+    background: rgba(231,76,60,0.4);
+    border-color: var(--rum-light);
+    cursor: default;
+  }
+  .cell.miss {
+    background: rgba(41,128,185,0.3);
+    border-color: var(--miss);
+    cursor: default;
+  }
+  .cell.sunk-cell {
+    background: rgba(142,68,173,0.4);
+    border-color: var(--sunk);
+    cursor: default;
+  }
+
+  .cell .ripple {
+    position: absolute; border-radius: 50%;
+    transform: scale(0); animation: ripple 0.4s ease-out;
+    pointer-events: none;
+  }
+  @keyframes ripple {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  /* CONTROLS */
+  .controls {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 10px;
+  }
+  .btn {
+    font-family: 'Pirata One', cursive;
+    font-size: 15px;
+    padding: 12px 8px;
+    border-radius: 8px;
+    border: 2px solid;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-fire {
+    background: var(--rum);
+    border-color: var(--rum-light);
+    color: white;
+    grid-column: span 2;
+    font-size: 18px;
+    padding: 14px;
+  }
+  .btn-fire:disabled {
+    opacity: 0.4; cursor: not-allowed; transform: none;
+  }
+  .btn-fire.pulse {
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(231,76,60,0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(231,76,60,0); }
+  }
+  .btn-surrender {
+    background: transparent;
+    border-color: var(--text-dim);
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .btn-new {
+    background: var(--ocean-light);
+    border-color: var(--gold);
+    color: var(--gold-light);
+    font-size: 13px;
+  }
+  .btn-new:hover { background: rgba(212,160,23,0.2); }
+
+  /* LEGEND */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 14px;
+    background: var(--ocean-mid);
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 12px; color: var(--text-dim);
+  }
+  .legend-dot {
+    width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0;
+  }
+
+  /* FLEET INFO */
+  .fleet-info {
+    background: var(--ocean-mid);
+    border: 1px solid var(--ocean-light);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+  .fleet-info h3 {
+    font-family: 'Pirata One', cursive;
+    color: var(--gold);
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  .fleet-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+  .fleet-ship {
+    display: flex; align-items: center; gap: 6px;
+    color: var(--text-dim);
+    transition: color 0.3s;
+  }
+  .fleet-ship.sunk { color: var(--rum-light); text-decoration: line-through; }
+  .fleet-ship.alive { color: var(--text-light); }
+
+  /* GAME OVER OVERLAY */
+  #gameOver {
+    display: none;
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(5,10,20,0.92);
+    align-items: center; justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+  #gameOver.show { display: flex; animation: fadeIn 0.5s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+  .gameover-skull { font-size: 72px; margin-bottom: 16px; }
+  .gameover-title {
+    font-family: 'Pirata One', cursive;
+    font-size: clamp(28px, 8vw, 48px);
+    color: var(--gold-light);
+    text-shadow: 0 0 30px rgba(212,160,23,0.6);
+    margin-bottom: 12px;
+  }
+  .gameover-msg {
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 16px;
+    max-width: 320px;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .btn-restart {
+    font-family: 'Pirata One', cursive;
+    font-size: 20px;
+    padding: 14px 32px;
+    background: var(--gold);
+    border: none;
+    border-radius: 8px;
+    color: var(--ocean);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-restart:active { transform: scale(0.96); }
+
+  /* PHASE OVERLAY */
+  #setupPhase {
+    display: none;
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(5,10,20,0.95);
+    align-items: center; justify-content: center;
+    flex-direction: column;
+    text-align: center; padding: 24px;
+  }
+  #setupPhase.show { display: flex; animation: fadeIn 0.4s ease; }
+  .setup-title {
+    font-family: 'Pirata One', cursive;
+    font-size: clamp(24px, 7vw, 36px);
+    color: var(--gold-light);
+    margin-bottom: 12px;
+  }
+  .setup-msg { font-style: italic; color: var(--text-dim); font-size: 15px; margin-bottom: 24px; line-height: 1.5; }
+
+  /* COORD SELECTOR */
+  .coord-display {
+    background: var(--ocean-mid);
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    padding: 8px 16px;
+    text-align: center;
+    font-family: 'Pirata One', cursive;
+    font-size: 20px;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+    min-width: 160px;
+  }
+  .coord-display span { color: var(--text-dim); font-size: 13px; font-family: 'Crimson Pro', serif; }
+
+  .turn-indicator {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .turn-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--gold);
+    animation: blink 1s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+  .turn-dot.rival { background: var(--rum-light); }
+
+  .log {
+    background: var(--ocean-mid);
+    border: 1px solid var(--ocean-light);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--text-dim);
+    max-height: 80px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+  }
+  .log p { line-height: 1.6; }
+  .log .hit-msg { color: var(--rum-light); }
+  .log .miss-msg { color: var(--miss); }
+  .log .sunk-msg { color: var(--sunk); }
+</style>
+</head>
+<body>
+
+<svg class="waves" viewBox="0 0 900 60" preserveAspectRatio="none">
+  <path class="wave" fill="#163357" d="M0,40 C150,20 300,60 450,40 C600,20 750,60 900,40 L900,60 L0,60 Z"/>
+  <path class="wave2" fill="#0d2040" opacity="0.7" d="M0,45 C150,25 300,65 450,45 C600,25 750,65 900,45 L900,60 L0,60 Z"/>
+</svg>
+
+<div id="app">
+  <header>
+    <h1>🏴‍☠️ Hundir la Flota</h1>
+    <div class="subtitle">Edición Pirata · Patrocinado por The Secret of Monkey Island</div>
+  </header>
+
+  <div class="turn-indicator" id="turnIndicator">
+    <div class="turn-dot" id="turnDot"></div>
+    <span id="turnText">Tu turno, pirata</span>
+  </div>
+
+  <div class="status-bar" id="statusBar">
+    <span class="icon">🏴‍☠️</span>
+    <span class="msg" id="statusMsg">¡Desplegando tu flota en el Mar Caribe...</span>
+  </div>
+
+  <div class="score-row">
+    <div class="score-card">
+      <div class="label">Barcos tuyos</div>
+      <div class="value" id="myShipsLeft">—</div>
+    </div>
+    <div class="score-card rival">
+      <div class="label">Barcos rivales</div>
+      <div class="value" id="enemyShipsLeft">—</div>
+    </div>
+  </div>
+
+  <!-- ENEMY BOARD (player attacks here) -->
+  <div class="boards-section">
+    <div class="board-label">
+      🎯 Aguas enemigas
+      <span class="badge">toca para disparar</span>
+    </div>
+    <div class="board-wrapper">
+      <div class="grid-container" id="enemyGrid"></div>
+    </div>
+
+    <div class="board-label">
+      ⚓ Tu flota
+      <span class="badge">tablero propio</span>
+    </div>
+    <div class="board-wrapper">
+      <div class="grid-container" id="myGrid"></div>
+    </div>
+  </div>
+
+  <div class="log" id="log"><p>⚓ El diario de bitácora está vacío...</p></div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(243,156,18,0.4);border:1px solid #f39c12"></div> Barco</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(231,76,60,0.4);border:1px solid #e74c3c"></div> Tocado</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(41,128,185,0.3);border:1px solid #2980b9"></div> Agua</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(142,68,173,0.4);border:1px solid #8e44ad"></div> Hundido</div>
+  </div>
+
+  <div class="fleet-info">
+    <h3>🚢 Tu flota</h3>
+    <div class="fleet-grid" id="fleetStatus"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-surrender" id="surrenderBtn" onclick="surrender()">🏳️ Huir como un pollo</button>
+    <button class="btn btn-new" id="newGameBtn" onclick="newGame()">🔄 Nueva partida</button>
+  </div>
+</div>
+
+<!-- GAME OVER -->
+<div id="gameOver">
+  <div class="gameover-skull" id="gameOverSkull"></div>
+  <div class="gameover-title" id="gameOverTitle"></div>
+  <div class="gameover-msg" id="gameOverMsg"></div>
+  <button class="btn-restart" onclick="newGame()">⚓ ¡Otra partida!</button>
+</div>
+
+<!-- SETUP PHASE -->
+<div id="setupPhase">
+  <div class="setup-title">⛵ Desplegando tu flota...</div>
+  <div class="setup-msg" id="setupMsg">Colocando los barcos en el Mar Caribe...<br>Que no se note el miedo.</div>
+  <div style="font-size:48px;animation:blink 1s ease-in-out infinite">🌊</div>
+</div>
+
+<script>
+// ============================================================
+// GAME STATE — translated 1:1 from Roberto's Python code
+// ============================================================
+const BOARD_SIZE = 10;
+
+// Ship names matching clases.py
+const SHIP_NAMES = { 2: 'canoa', 3: 'carabela', 4: 'fragata' };
+const SHIP_COUNTS = [
+  { eslora: 4, count: 1 },
+  { eslora: 3, count: 2 },
+  { eslora: 2, count: 3 }
+];
+
+let state = {};
+
+function createBoard() {
+  return Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill('~'));
+}
+
+function createShip(eslora) {
+  return {
+    eslora,
+    coordenadas: [],
+    vidas: eslora,
+    nombre: SHIP_NAMES[eslora] || 'embarcación',
+    hundido() { return this.vidas <= 0; },
+    recibirImpacto() { this.vidas--; }
+  };
+}
+
+function canPlace(board, fila, col, eslora, orientacion) {
+  for (let i = 0; i < eslora; i++) {
+    const r = orientacion === 'H' ? fila : fila + i;
+    const c = orientacion === 'H' ? col + i : col;
+    if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE) return false;
+    // Check surrounding cells to avoid adjacency
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        const nr = r + dr, nc = c + dc;
+        if (nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE) {
+          if (board[nr][nc] === 'O') return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+function placeShipsOnBoard(board) {
+  const flota = [];
+  for (const { eslora, count } of SHIP_COUNTS) {
+    for (let i = 0; i < count; i++) {
+      const barco = createShip(eslora);
+      let placed = false;
+      while (!placed) {
+        const orientacion = Math.random() < 0.5 ? 'H' : 'V';
+        const fila = Math.floor(Math.random() * BOARD_SIZE);
+        const col = Math.floor(Math.random() * BOARD_SIZE);
+        if (canPlace(board, fila, col, eslora, orientacion)) {
+          for (let k = 0; k < eslora; k++) {
+            const r = orientacion === 'H' ? fila : fila + k;
+            const c = orientacion === 'H' ? col + k : col;
+            board[r][c] = 'O';
+            barco.coordenadas.push([r, c]);
+          }
+          flota.push(barco);
+          placed = true;
+        }
+      }
+    }
+  }
+  return flota;
+}
+
+// disparar() — translated from utils.py
+function disparar(coords, board, flota) {
+  const [f, c] = coords;
+  if (board[f][c] === 'X' || board[f][c] === 'A') return 'repetido';
+  if (board[f][c] === 'O') {
+    board[f][c] = 'X';
+    // Find which ship was hit
+    for (const barco of flota) {
+      for (const [bf, bc] of barco.coordenadas) {
+        if (bf === f && bc === c) {
+          barco.recibirImpacto();
+          if (barco.hundido()) return 'hundido';
+          return 'tocado';
+        }
+      }
+    }
+    return 'tocado';
+  }
+  board[f][c] = 'A';
+  return 'agua';
+}
+
+function boardHasShips(board) {
+  return board.some(row => row.includes('O'));
+}
+
+// ============================================================
+// NEW GAME
+// ============================================================
+function newGame() {
+  document.getElementById('gameOver').classList.remove('show');
+  document.getElementById('setupPhase').classList.add('show');
+
+  setTimeout(() => {
+    state = {
+      myBoard: createBoard(),
+      enemyBoardHidden: createBoard(), // truth board for enemy
+      enemyBoardVisible: createBoard(), // what player sees
+      myFlota: [],
+      enemyFlota: [],
+      playerTurn: true,
+      gameOver: false,
+      selectedCell: null,
+      shotsAlreadyFired: new Set()
+    };
+
+    state.myFlota = placeShipsOnBoard(state.myBoard);
+    state.enemyFlota = placeShipsOnBoard(state.enemyBoardHidden);
+
+    document.getElementById('setupPhase').classList.remove('show');
+    clearLog();
+    logMsg('⚓ ¡Listos para la batalla! (Y para los insultos)', '');
+    setStatus('💣 ¡Dispara el cañón! Toca una celda del tablero enemigo.', '');
+    updateFleetStatus();
+    renderBoards();
+    updateScores();
+    setPlayerTurn(true);
+  }, 1800);
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderBoards() {
+  renderGrid('enemyGrid', state.enemyBoardVisible, true);
+  renderGrid('myGrid', state.myBoard, false);
+}
+
+function renderGrid(id, board, isEnemy) {
+  const container = document.getElementById(id);
+  container.innerHTML = '';
+
+  // Top-left empty corner
+  const corner = document.createElement('div');
+  corner.style.cssText = 'height:22px';
+  container.appendChild(corner);
+
+  // Column headers (0-9)
+  for (let c = 0; c < BOARD_SIZE; c++) {
+    const h = document.createElement('div');
+    h.className = 'col-header';
+    h.textContent = c;
+    container.appendChild(h);
+  }
+
+  for (let r = 0; r < BOARD_SIZE; r++) {
+    // Row header
+    const rh = document.createElement('div');
+    rh.className = 'row-header';
+    rh.textContent = r;
+    container.appendChild(rh);
+
+    for (let c = 0; c < BOARD_SIZE; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      const val = board[r][c];
+
+      if (isEnemy) {
+        cell.classList.add('enemy');
+        if (val === 'X') { cell.classList.add('hit'); cell.textContent = '💥'; }
+        else if (val === 'A') { cell.classList.add('miss'); cell.textContent = '💧'; }
+        else if (val === 'H') { cell.classList.add('sunk-cell'); cell.textContent = '💀'; }
+        else {
+          cell.addEventListener('click', () => handlePlayerShot(r, c));
+        }
+      } else {
+        // My board
+        if (val === 'O') { cell.classList.add('ship-cell'); cell.textContent = '🚢'; }
+        else if (val === 'X') { cell.classList.add('hit'); cell.textContent = '💥'; }
+        else if (val === 'A') { cell.classList.add('miss'); }
+        else if (val === 'H') { cell.classList.add('sunk-cell'); cell.textContent = '💀'; }
+      }
+
+      container.appendChild(cell);
+    }
+  }
+}
+
+// ============================================================
+// PLAYER SHOT
+// ============================================================
+function handlePlayerShot(r, c) {
+  if (!state.playerTurn || state.gameOver) return;
+  const key = `${r},${c}`;
+  if (state.shotsAlreadyFired.has(key)) {
+    setStatus('🗺️ ¡Ya disparaste ahí! ¡Apunta a otra casilla, torpón!', 'alert');
+    return;
+  }
+
+  state.shotsAlreadyFired.add(key);
+  setPlayerTurn(false);
+
+  const resultado = disparar([r, c], state.enemyBoardHidden, state.enemyFlota);
+
+  if (resultado === 'hundido') {
+    // Mark all cells of sunk ship with 'H' on visible board
+    const ship = state.enemyFlota.find(b => b.hundido() && b.coordenadas.some(([br,bc]) => br===r && bc===c));
+    if (ship) {
+      ship.coordenadas.forEach(([sr, sc]) => {
+        state.enemyBoardVisible[sr][sc] = 'H';
+        state.enemyBoardHidden[sr][sc] = 'H';
+      });
+    } else {
+      state.enemyBoardVisible[r][c] = 'H';
+    }
+    const sunkShipName = state.enemyFlota.find(b => b.coordenadas.some(([br,bc])=>br===r&&bc===c))?.nombre || 'barco';
+    logMsg(`💀 ¡Has hundido ${sunkShipName === 'canoa' ? 'la' : 'la'} ${sunkShipName} enemig${sunkShipName==='fragata'||sunkShipName==='carabela'?'a':'o'}!`, 'sunk-msg');
+    setStatus(`💀 ¡Hundiste su ${sunkShipName}! ¡Sigue disparando!`, 'success');
+  } else if (resultado === 'tocado') {
+    state.enemyBoardVisible[r][c] = 'X';
+    setStatus('✨ ¡Me has dado! ¡Luchas como un auténtico pirata!', 'success');
+    logMsg(`✨ ¡Tocado en (${r},${c})!`, 'hit-msg');
+  } else {
+    state.enemyBoardVisible[r][c] = 'A';
+    setStatus('💧 ¡Agua! El mar se ríe de tu puntería.', '');
+    logMsg(`💧 Agua en (${r},${c}).`, 'miss-msg');
+  }
+
+  renderBoards();
+  updateScores();
+
+  // Check win
+  if (!boardHasShips(state.enemyBoardHidden) || state.enemyFlota.every(b => b.hundido())) {
+    endGame(true);
+    return;
+  }
+
+  // If tocado or hundido, player shoots again
+  if (resultado === 'tocado' || resultado === 'hundido') {
+    setTimeout(() => setPlayerTurn(true), 400);
+    return;
+  }
+
+  // Enemy turn
+  setTimeout(() => enemyTurn(), 900);
+}
+
+// ============================================================
+// ENEMY TURN — rival shoots randomly, repeats on hit (from Python)
+// ============================================================
+const enemyShotsFired = new Set();
+
+function enemyTurn() {
+  if (state.gameOver) return;
+  setPlayerTurn(false);
+  setStatus('🧭 El rival consulta la brújula... ¡Prepárate!', '');
+
+  setTimeout(() => {
+    let r, c, key;
+    let attempts = 0;
+    do {
+      r = Math.floor(Math.random() * BOARD_SIZE);
+      c = Math.floor(Math.random() * BOARD_SIZE);
+      key = `${r},${c}`;
+      attempts++;
+    } while (enemyShotsFired.has(key) && attempts < 200);
+
+    enemyShotsFired.add(key);
+
+    const resultado = disparar([r, c], state.myBoard, state.myFlota);
+
+    renderBoards();
+    updateScores();
+    updateFleetStatus();
+
+    if (!boardHasShips(state.myBoard) || state.myFlota.every(b => b.hundido())) {
+      endGame(false);
+      return;
+    }
+
+    if (resultado === 'tocado') {
+      logMsg(`🆘 ¡El rival te tocó en (${r},${c})! ¡Tu apellido ahora es Problemas!`, 'hit-msg');
+      setStatus('🆘 ¡Te han dado! El rival repite turno.', 'alert');
+      setTimeout(() => enemyTurn(), 1200);
+    } else if (resultado === 'hundido') {
+      logMsg(`💀 ¡El rival hundió uno de tus barcos en (${r},${c})!`, 'sunk-msg');
+      setStatus('💀 ¡Hundieron uno de tus barcos! El rival repite turno.', 'alert');
+      setTimeout(() => enemyTurn(), 1200);
+    } else {
+      logMsg(`🌊 Rival disparó en (${r},${c}): agua.`, 'miss-msg');
+      setStatus('💣 ¡El rival ha fallado! Es tu turno, pirata.', '');
+      setTimeout(() => setPlayerTurn(true), 600);
+    }
+  }, 900);
+}
+
+// ============================================================
+// GAME OVER
+// ============================================================
+const victoryMsgs = [
+  "¿¡Cómo?! Has hundido mis barcos más rápido que el grog en la garganta de un pirata.",
+  "¡Has ganado! Claramente mi flota lucha como una vaca.",
+  "¡Nooooo! Tus disparos son más afilados que mi espada (recién afilada)."
+];
+const defeatMsgs = [
+  "¡He hundido tu flota! Espero que te guste el fondo del mar, aunque no hay mucho grog.",
+  "¡He ganado! Al menos ahora tus barcos no tendrán que aguantar tu cara.",
+  "¡Hundido! Mis disparos son tan certeros como mi dialéctica."
+];
+const surrenderMsgs = [
+  "🐒🐒🐒 ¿Te rindes? ¡Mira, detrás de ti, un mono de tres cabezas!",
+  "👎 ¿Abandonas?... ¡Sabía que ese traje de pirata te venía grande!",
+  "💀 Error 404: valentía no encontrada. Regresa cuando tengas agallas."
+];
+
+function endGame(playerWon, surrendered) {
+  state.gameOver = true;
+  const overlay = document.getElementById('gameOver');
+  document.getElementById('gameOverSkull').textContent = playerWon ? '🏆' : '💀';
+  document.getElementById('gameOverTitle').textContent = playerWon ? '¡Victoria!' : (surrendered ? '¡Cobarde!' : '¡Derrota!');
+  const msgs = playerWon ? victoryMsgs : (surrendered ? surrenderMsgs : defeatMsgs);
+  document.getElementById('gameOverMsg').textContent = msgs[Math.floor(Math.random() * msgs.length)];
+  overlay.classList.add('show');
+}
+
+function surrender() {
+  if (state.gameOver) return;
+  endGame(false, true);
+}
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function setStatus(msg, type) {
+  const bar = document.getElementById('statusBar');
+  const msgEl = document.getElementById('statusMsg');
+  bar.className = 'status-bar' + (type ? ' ' + type : '');
+  const icons = { alert: '🆘', success: '✨', '': '🏴‍☠️' };
+  bar.querySelector('.icon').textContent = icons[type] || '🏴‍☠️';
+  msgEl.textContent = msg;
+}
+
+function setPlayerTurn(isPlayer) {
+  if (state.gameOver) return;
+  state.playerTurn = isPlayer;
+  const dot = document.getElementById('turnDot');
+  const text = document.getElementById('turnText');
+  dot.className = 'turn-dot' + (isPlayer ? '' : ' rival');
+  text.textContent = isPlayer ? 'Tu turno, pirata' : 'Turno del rival...';
+}
+
+function updateScores() {
+  const myAlive = state.myFlota.filter(b => !b.hundido()).length;
+  const enemyAlive = state.enemyFlota.filter(b => !b.hundido()).length;
+  document.getElementById('myShipsLeft').textContent = myAlive;
+  document.getElementById('enemyShipsLeft').textContent = enemyAlive;
+}
+
+function updateFleetStatus() {
+  const container = document.getElementById('fleetStatus');
+  container.innerHTML = '';
+  state.myFlota.forEach(b => {
+    const div = document.createElement('div');
+    div.className = 'fleet-ship ' + (b.hundido() ? 'sunk' : 'alive');
+    div.textContent = (b.hundido() ? '💀 ' : '🚢 ') + b.nombre + ` (${b.eslora})`;
+    container.appendChild(div);
+  });
+}
+
+function logMsg(msg, cls) {
+  const log = document.getElementById('log');
+  const p = document.createElement('p');
+  p.className = cls;
+  p.textContent = msg;
+  log.appendChild(p);
+  log.scrollTop = log.scrollHeight;
+}
+
+function clearLog() {
+  document.getElementById('log').innerHTML = '';
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('load', () => {
+  document.getElementById('setupPhase').classList.add('show');
+  setTimeout(() => newGame(), 100);
+});
+</script>
+</body>
+</html>

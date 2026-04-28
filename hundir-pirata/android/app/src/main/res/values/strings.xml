@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Hundir la Flota Pirata</string>
+    <string name="title_activity_main">Hundir la Flota Pirata</string>
+    <string name="package_name">com.robertocantero.hundirlaflotapirata</string>
+    <string name="custom_url_scheme">com.robertocantero.hundirlaflotapirata</string>
+</resources>

@@ -1,0 +1,23 @@
+{
+  "appId": "com.robertocantero.hundirlaflotapirata",
+  "appName": "Hundir la Flota Pirata",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#0a1628",
+    "overrideUserAgent": "HundirLaFlotaPirata/1.0"
+  },
+  "server": {
+    "androidScheme": "https",
+    "cleartext": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#0a1628",
+      "showSpinner": false,
+      "androidScaleType": "CENTER_CROP"
+    }
+  }
+}

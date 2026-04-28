@@ -1,0 +1,22 @@
+{
+  "name": "hundir-la-flota-pirata",
+  "version": "1.0.0",
+  "description": "Hundir la Flota — Edición Pirata. App Android basada en el juego Python de RobertoCantero82.",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'No build step needed — HTML puro'",
+    "sync": "npx cap sync",
+    "android": "npx cap open android",
+    "deploy": "npx cap sync && npx cap open android"
+  },
+  "keywords": ["battleship", "pirata", "juego", "android"],
+  "author": "RobertoCantero82",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  }
+}
